@@ -15,15 +15,17 @@ const io = socketIo(server, {
     }
 });
 
+
 function bytesToGB(bytes) {
     return (bytes / (1024 ** 3)).toFixed(2) + ' GB';
 }
 
 async function obtenerDatosSistema() {
     try {
-        const [memoria, cpu, cpuTemp, discos, interfaces] = await Promise.all([
+        const [memoria, cpu, carga, cpuTemp, discos, interfaces] = await Promise.all([
             si.mem(),
             si.cpu(),
+            si.currentLoad(),
             si.cpuTemperature(),
             si.fsSize(),
             si.networkInterfaces()
@@ -60,6 +62,7 @@ async function obtenerDatosSistema() {
                 fabricante: cpu.manufacturer || 'Desconocido',
                 modelo: cpu.brand || 'Desconocido',
                 nucleos: cpu.cores,
+                usoTotal: carga.currentLoad ? `${carga.currentLoad.toFixed(2)}%` : 'N/D',
                 temperatura: cpuTemp.main ? `${cpuTemp.main} °C` : 'N/D'
             },
             memoria: {
