@@ -3,6 +3,7 @@ const http = require('http');
 const socketIo = require('socket.io');
 const si = require('systeminformation');
 const cors = require('cors');
+const { hostname } = require('os');
 
 const app = express();
 app.use(cors()); // Permitir CORS para todas las rutas
@@ -22,12 +23,13 @@ function bytesToGB(bytes) {
 
 async function obtenerDatosSistema() {
     try {
-        const [memoria, cpu, carga, cpuTemp, discos, interfaces] = await Promise.all([
+        const [memoria, cpu, carga, cpuTemp, discos, osInfo, interfaces] = await Promise.all([
             si.mem(),
             si.cpu(),
             si.currentLoad(),
             si.cpuTemperature(),
             si.fsSize(),
+            si.osInfo(),
             si.networkInterfaces()
         ]);
 
@@ -88,6 +90,14 @@ async function obtenerDatosSistema() {
                     puntoMontaje: sda5.mount,
                     esSwap: true
                 }
+            },
+            sistemaOperativo: {
+                plataforma: osInfo.platform || 'Desconocido',
+                distro: osInfo.distro || 'Desconocido',
+                version: osInfo.release || 'Desconocido',
+                kernel: osInfo.kernel || 'Desconocido',
+                arquitectura: osInfo.arch || 'Desconocido',
+                hostname: osInfo.hostname || hostname() ,
             },
             red
         };
