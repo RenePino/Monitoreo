@@ -4,6 +4,7 @@ const socketIo = require('socket.io');
 const si = require('systeminformation');
 const cors = require('cors');
 const { hostname } = require('os');
+const { BADHINTS } = require('dns');
 
 const app = express();
 app.use(cors()); // Permitir CORS para todas las rutas
@@ -23,13 +24,15 @@ function bytesToGB(bytes) {
 
 async function obtenerDatosSistema() {
     try {
-        const [memoria, cpu, carga, cpuTemp, discos, osInfo, interfaces] = await Promise.all([
+        const [time, memoria, cpu, carga, cpuTemp, discos, osInfo, versions, interfaces] = await Promise.all([
+            si.time(),
             si.mem(),
             si.cpu(),
             si.currentLoad(),
             si.cpuTemperature(),
             si.fsSize(),
             si.osInfo(),
+            si.versions(),
             si.networkInterfaces()
         ]);
 
@@ -60,6 +63,17 @@ async function obtenerDatosSistema() {
 
         return {
             timestamp: new Date().toISOString(),
+            tiempoActivo: { 
+             total: time.uptime ? `${(time.uptime / 3600).toFixed(2)}  'horas'` : 'N/D',
+            },  
+             sistemaOperativo: {
+                plataforma: osInfo.platform || 'Desconocido',
+                distro: osInfo.distro || 'Desconocido',
+                version: osInfo.release || 'Desconocido',
+                kernel: osInfo.kernel || 'Desconocido',
+                arquitectura: osInfo.arch || 'Desconocido',
+                hostname: osInfo.hostname || hostname() ,
+            },  
             cpu: {
                 fabricante: cpu.manufacturer || 'Desconocido',
                 modelo: cpu.brand || 'Desconocido',
@@ -91,13 +105,15 @@ async function obtenerDatosSistema() {
                     esSwap: true
                 }
             },
-            sistemaOperativo: {
-                plataforma: osInfo.platform || 'Desconocido',
-                distro: osInfo.distro || 'Desconocido',
-                version: osInfo.release || 'Desconocido',
-                kernel: osInfo.kernel || 'Desconocido',
-                arquitectura: osInfo.arch || 'Desconocido',
-                hostname: osInfo.hostname || hostname() ,
+            versiones: {
+                bash: versions.bash || 'N/D',
+                apache: versions.apache || 'N/D',
+                php: versions.php || 'N/D',
+                nginx: versions.nginx || 'N/D',
+                node: versions.node || 'N/D',
+                npm: versions.npm || 'N/D',
+                docker: versions.docker || 'N/D',
+                mysql: versions.mysql || 'N/D',
             },
             red
         };
