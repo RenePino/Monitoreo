@@ -24,7 +24,7 @@ function bytesToGB(bytes) {
 
 async function obtenerDatosSistema() {
     try {
-        const [time, memoria, cpu, carga, cpuTemp, discos, osInfo, versions, interfaces] = await Promise.all([
+        const [time, memoria, cpu, carga, cpuTemp, discos, osInfo, system, versions, interfaces] = await Promise.all([
             si.time(),
             si.mem(),
             si.cpu(),
@@ -32,6 +32,7 @@ async function obtenerDatosSistema() {
             si.cpuTemperature(),
             si.fsSize(),
             si.osInfo(),
+            si.system(),
             si.versions(),
             si.networkInterfaces()
         ]);
@@ -74,6 +75,10 @@ async function obtenerDatosSistema() {
                 arquitectura: osInfo.arch || 'Desconocido',
                 hostname: osInfo.hostname || hostname() ,
             },  
+            hardware: {
+                fabricante: system.manufacturer || 'Desconocido',
+                modelo: system.model || 'Desconocido',
+            },    
             cpu: {
                 fabricante: cpu.manufacturer || 'Desconocido',
                 modelo: cpu.brand || 'Desconocido',
