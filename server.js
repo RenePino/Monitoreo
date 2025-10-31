@@ -12,7 +12,7 @@ app.use(cors()); // Permitir CORS para todas las rutas
 const server = http.createServer(app);
 const io = socketIo(server, {
     cors: {
-        origin: '*', // Permitir cualquier origen (ideal para pruebas)
+        origin: '10.151.187.28', // Permitir origen del serviodor
         methods: ['GET', 'POST']
     }
 });
@@ -178,5 +178,5 @@ const PORT = 3000;
     console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });*/
 server.listen(PORT, '0.0.0.0', () => {
-    console.log(`Servidor corriendo en http://0.0.0.0:${PORT}`);
+    console.log(`Servidor corriendo en http://10.151.187.28:${PORT}`);
 });
