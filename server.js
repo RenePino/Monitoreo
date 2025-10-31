@@ -12,7 +12,7 @@ app.use(cors()); // Permitir CORS para todas las rutas
 const server = http.createServer(app);
 const io = socketIo(server, {
     cors: {
-        origin: '10.151.187.28', // Permitir origen del serviodor
+        origin: '10.151.187.188', // Permitir origen del serviodor  
         methods: ['GET', 'POST']
     }
 });
@@ -141,7 +141,13 @@ async function obtenerDatosSistema() {
 
 // Ruta básica
 app.get('/', (req, res) => {
-    res.send('Servidor de monitoreo activo. Usa <a href="/api/sistema">/api/sistema</a>');
+    res.json({
+    status: "online",
+    proyecto: "Monitor del Sistema",
+    version: "1.0",
+    endpoint: "/api/sistema",
+    mensaje: "Servidor backend activo y listo para recibir solicitudes."
+  });
 });
 
 // API REST para probar por navegador o fetch
@@ -178,5 +184,5 @@ const PORT = 3000;
     console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });*/
 server.listen(PORT, '0.0.0.0', () => {
-    console.log(`Servidor corriendo en http://10.151.187.28:${PORT}`);
+    console.log(`Servidor corriendo en http://10.151.187.188:${PORT}`);
 });
